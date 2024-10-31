@@ -510,7 +510,7 @@ export class Doc {
   deleteBlock(
     model: DraftModel,
     options: {
-      bringChildrenTo?: DraftModel;
+      bringChildrenTo?: BlockModel;
       deleteChildren?: boolean;
     } = {
       deleteChildren: true,
