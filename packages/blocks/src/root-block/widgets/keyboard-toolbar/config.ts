@@ -73,10 +73,20 @@ import {
   TextBackgroundDuotoneIcon,
   TextColorIcon,
 } from './icons.js';
-import { TOOL_PANEL_ICON_STYLE, TOOLBAR_ICON_STYLE } from './styles.js';
 
 export type KeyboardToolbarConfig = {
   items: KeyboardToolbarItem[];
+  /**
+   * @description Whether to use the screen height as the keyboard height when the virtual keyboard API is not supported.
+   * It is useful when the app is running in a webview and the keyboard is not overlaid on the content.
+   * @default false
+   */
+  useScreenHeight?: boolean;
+  /**
+   * @description The safe bottom padding of the keyboard toolbar.
+   * It is useful when the device has a rounded corner screen.
+   */
+  safeBottomPadding?: string;
 };
 
 export type KeyboardToolbarItem =
@@ -145,7 +155,7 @@ export type DynamicKeyboardToolPanelGroup = (
 const textToolActionItems: KeyboardToolbarActionItem[] = [
   {
     name: 'Text',
-    icon: TextIcon(TOOL_PANEL_ICON_STYLE),
+    icon: TextIcon(),
     showWhen: ({ std }) =>
       std.doc.schema.flavourSchemaMap.has('affine:paragraph'),
     action: ({ std }) => {
@@ -170,7 +180,7 @@ const textToolActionItems: KeyboardToolbarActionItem[] = [
   {
     name: 'CodeBlock',
     showWhen: ({ std }) => std.doc.schema.flavourSchemaMap.has('affine:code'),
-    icon: CodeBlockIcon(TOOL_PANEL_ICON_STYLE),
+    icon: CodeBlockIcon(),
     action: ({ std }) => {
       std.command.exec('updateBlockType', {
         flavour: 'affine:code',
@@ -181,7 +191,7 @@ const textToolActionItems: KeyboardToolbarActionItem[] = [
     name: 'Quote',
     showWhen: ({ std }) =>
       std.doc.schema.flavourSchemaMap.has('affine:paragraph'),
-    icon: QuoteIcon(TOOL_PANEL_ICON_STYLE),
+    icon: QuoteIcon(),
     action: ({ std }) => {
       std.command.exec('updateBlockType', {
         flavour: 'affine:paragraph',
@@ -191,7 +201,7 @@ const textToolActionItems: KeyboardToolbarActionItem[] = [
   },
   {
     name: 'Divider',
-    icon: DividerIcon(TOOL_PANEL_ICON_STYLE),
+    icon: DividerIcon(),
     showWhen: ({ std }) =>
       std.doc.schema.flavourSchemaMap.has('affine:divider'),
     action: ({ std }) => {
@@ -203,7 +213,7 @@ const textToolActionItems: KeyboardToolbarActionItem[] = [
   },
   {
     name: 'Inline equation',
-    icon: TeXIcon(TOOL_PANEL_ICON_STYLE),
+    icon: TeXIcon(),
     showWhen: ({ std }) =>
       std.doc.schema.flavourSchemaMap.has('affine:paragraph'),
     action: ({ std }) => {
@@ -215,7 +225,7 @@ const textToolActionItems: KeyboardToolbarActionItem[] = [
 const listToolActionItems: KeyboardToolbarActionItem[] = [
   {
     name: 'BulletedList',
-    icon: BulletedListIcon(TOOL_PANEL_ICON_STYLE),
+    icon: BulletedListIcon(),
     showWhen: ({ std }) => std.doc.schema.flavourSchemaMap.has('affine:list'),
     action: ({ std }) => {
       std.command.exec('updateBlockType', {
@@ -228,7 +238,7 @@ const listToolActionItems: KeyboardToolbarActionItem[] = [
   },
   {
     name: 'NumberedList',
-    icon: NumberedListIcon(TOOL_PANEL_ICON_STYLE),
+    icon: NumberedListIcon(),
     showWhen: ({ std }) => std.doc.schema.flavourSchemaMap.has('affine:list'),
     action: ({ std }) => {
       std.command.exec('updateBlockType', {
@@ -241,7 +251,7 @@ const listToolActionItems: KeyboardToolbarActionItem[] = [
   },
   {
     name: 'CheckBox',
-    icon: CheckBoxCheckLinearIcon(TOOL_PANEL_ICON_STYLE),
+    icon: CheckBoxCheckLinearIcon(),
     showWhen: ({ std }) => std.doc.schema.flavourSchemaMap.has('affine:list'),
     action: ({ std }) => {
       std.command.exec('updateBlockType', {
@@ -259,7 +269,7 @@ const pageToolGroup: KeyboardToolPanelGroup = {
   items: [
     {
       name: 'NewPage',
-      icon: NewPageIcon(TOOL_PANEL_ICON_STYLE),
+      icon: NewPageIcon(),
       showWhen: ({ std }) =>
         std.doc.schema.flavourSchemaMap.has('affine:embed-linked-doc'),
       action: ({ std }) => {
@@ -281,7 +291,7 @@ const pageToolGroup: KeyboardToolPanelGroup = {
     },
     {
       name: 'LinkedPage',
-      icon: LinkedPageIcon(TOOL_PANEL_ICON_STYLE),
+      icon: LinkedPageIcon(),
       showWhen: ({ std, rootComponent }) => {
         const linkedDocWidget = std.view.getWidget(
           'affine-linked-doc-widget',
@@ -343,7 +353,7 @@ const contentMediaToolGroup: KeyboardToolPanelGroup = {
   items: [
     {
       name: 'Image',
-      icon: NewPageIcon(TOOL_PANEL_ICON_STYLE),
+      icon: NewPageIcon(),
       showWhen: ({ std }) =>
         std.doc.schema.flavourSchemaMap.has('affine:image'),
       action: ({ std }) => {
@@ -356,7 +366,7 @@ const contentMediaToolGroup: KeyboardToolPanelGroup = {
     },
     {
       name: 'Link',
-      icon: LinkIcon(TOOL_PANEL_ICON_STYLE),
+      icon: LinkIcon(),
       showWhen: ({ std }) =>
         std.doc.schema.flavourSchemaMap.has('affine:bookmark'),
       action: async ({ std }) => {
@@ -381,7 +391,7 @@ const contentMediaToolGroup: KeyboardToolPanelGroup = {
     },
     {
       name: 'Attachment',
-      icon: AttachmentIcon(TOOL_PANEL_ICON_STYLE),
+      icon: AttachmentIcon(),
       showWhen: ({ std }) =>
         std.doc.schema.flavourSchemaMap.has('affine:attachment'),
       action: async ({ std }) => {
@@ -405,7 +415,6 @@ const contentMediaToolGroup: KeyboardToolPanelGroup = {
     {
       name: 'Youtube',
       icon: YoutubeDuotoneIcon({
-        ...TOOL_PANEL_ICON_STYLE,
         style: `color: white`,
       }),
       showWhen: ({ std }) =>
@@ -432,7 +441,7 @@ const contentMediaToolGroup: KeyboardToolPanelGroup = {
     },
     {
       name: 'Github',
-      icon: GithubIcon({ ...TOOL_PANEL_ICON_STYLE, style: `color: black` }),
+      icon: GithubIcon({ style: `color: black` }),
       showWhen: ({ std }) =>
         std.doc.schema.flavourSchemaMap.has('affine:embed-github'),
       action: async ({ std }) => {
@@ -483,7 +492,7 @@ const contentMediaToolGroup: KeyboardToolPanelGroup = {
     },
     {
       name: 'Loom',
-      icon: LoomLogoIcon({ ...TOOL_PANEL_ICON_STYLE, style: `color: #625DF5` }),
+      icon: LoomLogoIcon({ style: `color: #625DF5` }),
       showWhen: ({ std }) =>
         std.doc.schema.flavourSchemaMap.has('affine:embed-loom'),
       action: async ({ std }) => {
@@ -508,7 +517,7 @@ const contentMediaToolGroup: KeyboardToolPanelGroup = {
     },
     {
       name: 'Equation',
-      icon: TeXIcon(TOOL_PANEL_ICON_STYLE),
+      icon: TeXIcon(),
       showWhen: ({ std }) =>
         std.doc.schema.flavourSchemaMap.has('affine:latex'),
       action: ({ std }) => {
@@ -536,7 +545,7 @@ const documentGroupFrameToolGroup: DynamicKeyboardToolPanelGroup = ({
 
   const frameItems = frameModels.map<KeyboardToolbarActionItem>(frameModel => ({
     name: 'Frame: ' + frameModel.title.toString(),
-    icon: FrameIcon(TOOL_PANEL_ICON_STYLE),
+    icon: FrameIcon(),
     action: ({ std }) => {
       std.command
         .chain()
@@ -558,7 +567,7 @@ const documentGroupFrameToolGroup: DynamicKeyboardToolPanelGroup = ({
 
   const groupItems = groupElements.map<KeyboardToolbarActionItem>(group => ({
     name: 'Group: ' + group.title.toString(),
-    icon: GroupIcon(TOOL_PANEL_ICON_STYLE),
+    icon: GroupIcon(),
     action: ({ std }) => {
       std.command
         .chain()
@@ -587,7 +596,7 @@ const dateToolGroup: KeyboardToolPanelGroup = {
   items: [
     {
       name: 'Today',
-      icon: TodayIcon(TOOL_PANEL_ICON_STYLE),
+      icon: TodayIcon(),
       action: ({ std }) => {
         const { selectedModels } = std.command.exec('getSelectedModels');
         const model = selectedModels?.[0];
@@ -598,7 +607,7 @@ const dateToolGroup: KeyboardToolPanelGroup = {
     },
     {
       name: 'Tomorrow',
-      icon: TomorrowIcon(TOOL_PANEL_ICON_STYLE),
+      icon: TomorrowIcon(),
       action: ({ std }) => {
         const { selectedModels } = std.command.exec('getSelectedModels');
         const model = selectedModels?.[0];
@@ -611,7 +620,7 @@ const dateToolGroup: KeyboardToolPanelGroup = {
     },
     {
       name: 'Yesterday',
-      icon: YesterdayIcon(TOOL_PANEL_ICON_STYLE),
+      icon: YesterdayIcon(),
       action: ({ std }) => {
         const { selectedModels } = std.command.exec('getSelectedModels');
         const model = selectedModels?.[0];
@@ -624,7 +633,7 @@ const dateToolGroup: KeyboardToolPanelGroup = {
     },
     {
       name: 'Now',
-      icon: NowIcon(TOOL_PANEL_ICON_STYLE),
+      icon: NowIcon(),
       action: ({ std }) => {
         const { selectedModels } = std.command.exec('getSelectedModels');
         const model = selectedModels?.[0];
@@ -641,7 +650,7 @@ const databaseToolGroup: KeyboardToolPanelGroup = {
   items: [
     {
       name: 'Table view',
-      icon: DatabaseTableViewIcon(TOOL_PANEL_ICON_STYLE),
+      icon: DatabaseTableViewIcon(),
       showWhen: ({ std }) =>
         std.doc.schema.flavourSchemaMap.has('affine:database'),
       action: ({ std }) => {
@@ -658,7 +667,7 @@ const databaseToolGroup: KeyboardToolPanelGroup = {
     },
     {
       name: 'Kanban view',
-      icon: DatabaseKanbanViewIcon(TOOL_PANEL_ICON_STYLE),
+      icon: DatabaseKanbanViewIcon(),
       showWhen: ({ std }) =>
         std.doc.schema.flavourSchemaMap.has('affine:database'),
       action: ({ std }) => {
@@ -677,9 +686,8 @@ const databaseToolGroup: KeyboardToolPanelGroup = {
 };
 
 const moreToolPanel: KeyboardToolPanelConfig = {
-  icon: PlusIcon(TOOLBAR_ICON_STYLE),
+  icon: PlusIcon(),
   activeIcon: CloseIcon({
-    ...TOOLBAR_ICON_STYLE,
     style: `color: ${cssVarV2('icon/activated')}`,
   }),
   activeBackground: cssVarV2('edgeless/selection/selectionMarqueeBackground'),
@@ -695,7 +703,7 @@ const moreToolPanel: KeyboardToolPanelConfig = {
 };
 
 const textToolPanel: KeyboardToolPanelConfig = {
-  icon: TextIcon(TOOLBAR_ICON_STYLE),
+  icon: TextIcon(),
   groups: [
     {
       name: 'Turn into',
@@ -707,7 +715,7 @@ const textToolPanel: KeyboardToolPanelConfig = {
 const textStyleToolItems: KeyboardToolbarItem[] = [
   {
     name: 'Bold',
-    icon: BoldIcon(TOOLBAR_ICON_STYLE),
+    icon: BoldIcon(),
     background: ({ std }) => {
       const { textStyle } = std.command.exec('getTextStyle');
       return textStyle?.bold ? '#00000012' : '';
@@ -718,7 +726,7 @@ const textStyleToolItems: KeyboardToolbarItem[] = [
   },
   {
     name: 'Italic',
-    icon: ItalicIcon(TOOLBAR_ICON_STYLE),
+    icon: ItalicIcon(),
     background: ({ std }) => {
       const { textStyle } = std.command.exec('getTextStyle');
       return textStyle?.italic ? '#00000012' : '';
@@ -729,7 +737,7 @@ const textStyleToolItems: KeyboardToolbarItem[] = [
   },
   {
     name: 'UnderLine',
-    icon: UnderLineIcon(TOOLBAR_ICON_STYLE),
+    icon: UnderLineIcon(),
     background: ({ std }) => {
       const { textStyle } = std.command.exec('getTextStyle');
       return textStyle?.underline ? '#00000012' : '';
@@ -740,7 +748,7 @@ const textStyleToolItems: KeyboardToolbarItem[] = [
   },
   {
     name: 'StrikeThrough',
-    icon: StrikeThroughIcon(TOOLBAR_ICON_STYLE),
+    icon: StrikeThroughIcon(),
     background: ({ std }) => {
       const { textStyle } = std.command.exec('getTextStyle');
       return textStyle?.strike ? '#00000012' : '';
@@ -751,7 +759,7 @@ const textStyleToolItems: KeyboardToolbarItem[] = [
   },
   {
     name: 'Code',
-    icon: CodeIcon(TOOLBAR_ICON_STYLE),
+    icon: CodeIcon(),
     background: ({ std }) => {
       const { textStyle } = std.command.exec('getTextStyle');
       return textStyle?.code ? '#00000012' : '';
@@ -762,7 +770,7 @@ const textStyleToolItems: KeyboardToolbarItem[] = [
   },
   {
     name: 'Link',
-    icon: LinkIcon(TOOLBAR_ICON_STYLE),
+    icon: LinkIcon(),
     background: ({ std }) => {
       const { textStyle } = std.command.exec('getTextStyle');
       return textStyle?.link ? '#00000012' : '';
@@ -867,13 +875,13 @@ const highlightToolPanel: KeyboardToolPanelConfig = {
 };
 
 const textSubToolbarConfig: KeyboardSubToolbarConfig = {
-  icon: FontIcon(TOOLBAR_ICON_STYLE),
+  icon: FontIcon(),
   items: [
     textToolPanel,
     ...textStyleToolItems,
     {
       name: 'InlineTex',
-      icon: TeXIcon(TOOLBAR_ICON_STYLE),
+      icon: TeXIcon(),
       action: ({ std }) => {
         std.command.chain().getTextSelection().insertInlineLatex().run();
       },
@@ -892,7 +900,7 @@ export const defaultKeyboardToolbarConfig: KeyboardToolbarConfig = {
     ...textToolActionItems.filter(({ name }) => name === 'Divider'),
     {
       name: 'Undo',
-      icon: UndoIcon(TOOLBAR_ICON_STYLE),
+      icon: UndoIcon(),
       disableWhen: ({ std }) => !std.doc.canUndo,
       action: ({ std }) => {
         std.doc.undo();
@@ -900,7 +908,7 @@ export const defaultKeyboardToolbarConfig: KeyboardToolbarConfig = {
     },
     {
       name: 'Redo',
-      icon: RedoIcon(TOOLBAR_ICON_STYLE),
+      icon: RedoIcon(),
       disableWhen: ({ std }) => !std.doc.canRedo,
       action: ({ std }) => {
         std.doc.redo();
@@ -908,7 +916,7 @@ export const defaultKeyboardToolbarConfig: KeyboardToolbarConfig = {
     },
     {
       name: 'RightTab',
-      icon: RightTabIcon(TOOLBAR_ICON_STYLE),
+      icon: RightTabIcon(),
       disableWhen: ({ std }) => {
         const [success] = std.command
           .chain()
@@ -928,7 +936,7 @@ export const defaultKeyboardToolbarConfig: KeyboardToolbarConfig = {
     },
     {
       name: 'CollapseTab',
-      icon: CollapseTabIcon(TOOLBAR_ICON_STYLE),
+      icon: CollapseTabIcon(),
       disableWhen: ({ std }) => {
         const [success] = std.command
           .chain()
@@ -948,7 +956,7 @@ export const defaultKeyboardToolbarConfig: KeyboardToolbarConfig = {
     },
     {
       name: 'Copy',
-      icon: CopyIcon(TOOLBAR_ICON_STYLE),
+      icon: CopyIcon(),
       action: ({ std }) => {
         std.command
           .chain()
@@ -965,7 +973,7 @@ export const defaultKeyboardToolbarConfig: KeyboardToolbarConfig = {
     },
     {
       name: 'Duplicate',
-      icon: DuplicateIcon(TOOLBAR_ICON_STYLE),
+      icon: DuplicateIcon(),
       action: ({ std }) => {
         std.command
           .chain()
@@ -979,7 +987,7 @@ export const defaultKeyboardToolbarConfig: KeyboardToolbarConfig = {
     ...pageToolGroup.items.filter(({ name }) => name === 'LinkedPage'),
     {
       name: 'Move Up',
-      icon: ArrowUpBigIcon(TOOLBAR_ICON_STYLE),
+      icon: ArrowUpBigIcon(),
       action: ({ std }) => {
         const { selectedModels } = std.command.exec('getSelectedModels');
         const model = selectedModels?.[0];
@@ -996,7 +1004,7 @@ export const defaultKeyboardToolbarConfig: KeyboardToolbarConfig = {
     },
     {
       name: 'Move Down',
-      icon: ArrowDownBigIcon(TOOLBAR_ICON_STYLE),
+      icon: ArrowDownBigIcon(),
       action: ({ std }) => {
         const { selectedModels } = std.command.exec('getSelectedModels');
         const model = selectedModels?.[0];
@@ -1013,10 +1021,11 @@ export const defaultKeyboardToolbarConfig: KeyboardToolbarConfig = {
     },
     {
       name: 'Delete',
-      icon: DeleteIcon(TOOLBAR_ICON_STYLE),
+      icon: DeleteIcon(),
       action: ({ std }) => {
         std.command.chain().getSelectedModels().deleteSelectedModels().run();
       },
     },
   ],
+  useScreenHeight: false,
 };

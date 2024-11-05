@@ -1,5 +1,110 @@
 # @blocksuite/affine-block-surface
 
+## 0.17.26
+
+### Patch Changes
+
+- cfa436e: ## Feat
+
+  - feat: add pdf viewer to playground (#8650)
+  - feat: add view toggle menu to toolbar of attachment block (#8660)
+  - feat: attachment embedded view supports configurable (#8658)
+
+  ## Fix
+
+  - fix: tidy up after multiple images uploaded (#8671)
+  - fix: unable to add caption for linked document of embedded view (#8670)
+  - fix(blocks): code block should update highlight when theme changed (#8669)
+  - fix(edgeless): allow right click of tool controller (#8652)
+  - fix(database): short name of tag type (#8665)
+  - fix: the content of formula should contain spaces (#8647)
+  - fix: import notion database with title (#8661)
+  - fix(page): bookmark block selected style (#8656)
+  - fix(edgeless): switching shape style and color, the preview does not change in time (#8655)
+  - fix(blocks): size of icons are not consistent in keyboard toolbar (#8653)
+  - fix: use host instead of offsetParent (#8651)
+
+  ## Refactor
+
+  - refactor(database): filter ui (#8611)
+
+  ## Ci
+
+  - ci: renovate pr title lint (#8666)
+
+- Updated dependencies [cfa436e]
+  - @blocksuite/affine-components@0.17.26
+  - @blocksuite/affine-model@0.17.26
+  - @blocksuite/affine-shared@0.17.26
+  - @blocksuite/block-std@0.17.26
+  - @blocksuite/global@0.17.26
+  - @blocksuite/inline@0.17.26
+  - @blocksuite/store@0.17.26
+
+## 0.17.25
+
+### Patch Changes
+
+- 4d0bd4c: fix(blocks): reset keyboard toolbar after blur (#8646)
+
+  ## Fix
+
+  - fix(blocks): reset keyboard toolbar after blur (#8646)
+  - fix: scale note and edgeless-text when resize and align elements (#8642)
+  - fix(edgeless): can not insert link when no selection (#8644)
+  - fix(database): prevent 0 in number cells from getting rendered as an empty string (#8629)
+
+  ## Refactor
+
+  - refactor(blocks): provide position controll config for keyboard toolbar (#8645)
+
+- Updated dependencies [4d0bd4c]
+  - @blocksuite/affine-components@0.17.25
+  - @blocksuite/affine-model@0.17.25
+  - @blocksuite/affine-shared@0.17.25
+  - @blocksuite/block-std@0.17.25
+  - @blocksuite/global@0.17.25
+  - @blocksuite/inline@0.17.25
+  - @blocksuite/store@0.17.25
+
+## 0.17.24
+
+### Patch Changes
+
+- 5e23d07: fix(edgeless): failed to add link in edgeless text (#8589)
+
+  ## Feat
+
+  - feat(blocks): add callback control to AI panel hide and toggle (#8639)
+
+  ## Fix
+
+  - fix(edgeless): failed to add link in edgeless text (#8589)
+  - fix: add data-theme on surface ref component (#8638)
+  - fix(edgeless): stop pointer event propagation from latex editor menu (#8633)
+  - fix: use html theme observer result as default app theme value (#8635)
+  - fix(blocks): incorrect mobile keyboard toolbar when scroll (#8634)
+
+  ## Chore
+
+  - chore: release patch version (#8636)
+
+- 39a840a: ## Fix
+
+  - fix(edgeless): stop pointer event propagation from latex editor menu (#8633)
+  - fix: use html theme observer result as default app theme value (#8635)
+  - fix(blocks): incorrect mobile keyboard toolbar when scroll (#8634)
+
+- Updated dependencies [5e23d07]
+- Updated dependencies [39a840a]
+  - @blocksuite/affine-components@0.17.24
+  - @blocksuite/affine-model@0.17.24
+  - @blocksuite/affine-shared@0.17.24
+  - @blocksuite/block-std@0.17.24
+  - @blocksuite/global@0.17.24
+  - @blocksuite/inline@0.17.24
+  - @blocksuite/store@0.17.24
+
 ## 0.17.23
 
 ### Patch Changes

@@ -8,6 +8,7 @@ import type { PageRootBlockComponent } from '../../page/page-root-block.js';
 import type {
   KeyboardSubToolbarConfig,
   KeyboardToolbarActionItem,
+  KeyboardToolbarConfig,
   KeyboardToolbarItem,
   KeyboardToolPanelConfig,
 } from './config.js';
@@ -29,6 +30,10 @@ export class VirtualKeyboardController implements ReactiveController {
       this._keyboardOpened$.value = virtualKeyboard.boundingRect.height > 0;
       this._keyboardHeight$.value = virtualKeyboard.boundingRect.height;
     } else if (visualViewport) {
+      const windowHeight = this.host.config.useScreenHeight
+        ? window.screen.height
+        : window.innerHeight;
+
       /**
        * ┌───────────────┐ - window top
        * │               │
@@ -42,10 +47,9 @@ export class VirtualKeyboardController implements ReactiveController {
        * │               │                       │ visualViewport.offsetTop
        * └───────────────┘ - window bottom       --
        */
-      this._keyboardOpened$.value =
-        window.innerHeight - visualViewport.height > 0;
+      this._keyboardOpened$.value = windowHeight - visualViewport.height > 0;
       this._keyboardHeight$.value =
-        window.innerHeight - visualViewport.height - visualViewport.offsetTop;
+        windowHeight - visualViewport.height - visualViewport.offsetTop;
     } else {
       notSupportedWarning();
     }
@@ -55,18 +59,19 @@ export class VirtualKeyboardController implements ReactiveController {
     if (navigator.virtualKeyboard) {
       navigator.virtualKeyboard.hide();
     } else {
-      if (document.activeElement !== this.host.rootComponent) return;
       this.host.rootComponent.inputMode = 'none';
     }
   };
 
-  host: ReactiveControllerHost & { rootComponent: PageRootBlockComponent };
+  host: ReactiveControllerHost & {
+    rootComponent: PageRootBlockComponent;
+    config: KeyboardToolbarConfig;
+  };
 
   show = () => {
     if (navigator.virtualKeyboard) {
       navigator.virtualKeyboard.show();
     } else {
-      if (document.activeElement !== this.host.rootComponent) return;
       this.host.rootComponent.inputMode = '';
     }
   };
@@ -91,9 +96,7 @@ export class VirtualKeyboardController implements ReactiveController {
     return this._keyboardOpened$.value;
   }
 
-  constructor(
-    host: ReactiveControllerHost & { rootComponent: PageRootBlockComponent }
-  ) {
+  constructor(host: VirtualKeyboardController['host']) {
     (this.host = host).addController(this);
   }
 
@@ -110,17 +113,6 @@ export class VirtualKeyboardController implements ReactiveController {
         navigator.virtualKeyboard.overlaysContent = overlaysContent;
         this.host.rootComponent.virtualKeyboardPolicy = virtualKeyboardPolicy;
       });
-
-      this._disposables.addFromEvent(
-        this.host.rootComponent,
-        'focus',
-        this.show
-      );
-      this._disposables.addFromEvent(
-        this.host.rootComponent,
-        'blur',
-        this.hide
-      );
       this._disposables.addFromEvent(
         navigator.virtualKeyboard,
         'geometrychange',
@@ -140,6 +132,9 @@ export class VirtualKeyboardController implements ReactiveController {
     } else {
       notSupportedWarning();
     }
+
+    this._disposables.addFromEvent(this.host.rootComponent, 'focus', this.show);
+    this._disposables.addFromEvent(this.host.rootComponent, 'blur', this.hide);
 
     this._updateKeyboardHeight();
   }

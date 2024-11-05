@@ -17,11 +17,7 @@ import type {
 } from './config.js';
 
 import { PageRootBlockComponent } from '../../page/page-root-block.js';
-import {
-  keyboardToolbarStyles,
-  TOOLBAR_HEIGHT,
-  TOOLBAR_ICON_STYLE,
-} from './styles.js';
+import { keyboardToolbarStyles, TOOLBAR_HEIGHT } from './styles.js';
 import {
   isKeyboardSubToolBarConfig,
   isKeyboardToolBarActionItem,
@@ -159,6 +155,18 @@ export class AffineKeyboardToolbar extends SignalWatcher(
     return this._path$.value.length > 0;
   }
 
+  private get _safeBottomPaddingStyle() {
+    const safeBottomPadding = this.config.safeBottomPadding;
+    return styleMap(
+      this._shrink$.value && safeBottomPadding
+        ? {
+            paddingBottom: safeBottomPadding,
+            height: `calc(${TOOLBAR_HEIGHT}px + ${safeBottomPadding})`,
+          }
+        : {}
+    );
+  }
+
   private _renderIcon(icon: KeyboardIconType) {
     return typeof icon === 'function' ? icon(this._context) : icon;
   }
@@ -204,7 +212,7 @@ export class AffineKeyboardToolbar extends SignalWatcher(
       this._isSubToolbarOpened,
       () =>
         html`<icon-button size="36px" @click=${this._goPrevToolbar}>
-          ${ArrowLeftBigIcon(TOOLBAR_ICON_STYLE)}
+          ${ArrowLeftBigIcon()}
         </icon-button>`
     );
 
@@ -219,7 +227,7 @@ export class AffineKeyboardToolbar extends SignalWatcher(
   private _renderKeyboardButton() {
     return html`<div class="keyboard-container">
       <icon-button size="36px" @click=${this._handleKeyboardButtonClicked}>
-        ${KeyboardIcon(TOOLBAR_ICON_STYLE)}
+        ${KeyboardIcon()}
       </icon-button>
     </div>`;
   }
@@ -234,6 +242,8 @@ export class AffineKeyboardToolbar extends SignalWatcher(
     this.disposables.addFromEvent(this.rootComponent, 'blur', () => {
       this._showToolbar$.value = false;
       this._shrink$.value = true;
+      this._currentPanelIndex$.value = -1;
+      this._path$.value = [];
     });
 
     // prevent editor blur when click item in toolbar
@@ -257,10 +267,11 @@ export class AffineKeyboardToolbar extends SignalWatcher(
           document.body.style.paddingBottom = '0px';
         } else if (this._shrink$.value) {
           document.body.style.paddingBottom = `${TOOLBAR_HEIGHT}px`;
-        } else if (this._keyboardController.opened) {
+        } else if (
+          this._keyboardController.opened &&
+          !this.config.useScreenHeight
+        ) {
           document.body.style.paddingBottom = `${this._keyboardController.keyboardHeight + TOOLBAR_HEIGHT}px`;
-        } else if (this._isPanelOpened) {
-          document.body.style.paddingBottom = `${this._panelHeight$.value + TOOLBAR_HEIGHT}px`;
         } else {
           document.body.style.paddingBottom = '0px';
         }
@@ -271,10 +282,14 @@ export class AffineKeyboardToolbar extends SignalWatcher(
   override render() {
     if (!this._showToolbar$.value) return nothing;
 
-    this.style.bottom = `${this._shrink$.value ? -this._panelHeight$.value : 0}px`;
+    this.style.bottom =
+      (this.config.useScreenHeight && this._keyboardController.opened) ||
+      this._shrink$.value
+        ? `${-this._panelHeight$.value}px`
+        : '0px';
 
     return html`
-      <div class="keyboard-toolbar">
+      <div class="keyboard-toolbar" style=${this._safeBottomPaddingStyle}>
         ${this._renderItems()}
         <div class="divider"></div>
         ${this._renderKeyboardButton()}
