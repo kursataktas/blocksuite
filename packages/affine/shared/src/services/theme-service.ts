@@ -218,6 +218,7 @@ const toolbarColorKeys: Array<keyof AffineCssVariables> = [
   '--affine-text-primary-color',
   '--affine-hover-color',
   '--affine-hover-color-filled',
+  '--affine-white',
 ];
 
 export const lightToolbarStyles = toolbarColorKeys.map(
