@@ -2,7 +2,10 @@ import type { AffineInlineEditor } from '@blocksuite/affine-components/rich-text
 import type { UIEventStateContext } from '@blocksuite/block-std';
 
 import { getInlineEditorByModel } from '@blocksuite/affine-components/rich-text';
-import { matchFlavours } from '@blocksuite/affine-shared/utils';
+import {
+  getViewportElement,
+  matchFlavours,
+} from '@blocksuite/affine-shared/utils';
 import { WidgetComponent } from '@blocksuite/block-std';
 import { IS_MOBILE } from '@blocksuite/global/env';
 import { InlineEditor } from '@blocksuite/inline';
@@ -150,7 +153,11 @@ export class AffineLinkedDocWidget extends WidgetComponent {
       ignoreBlockTypes: ['affine:code'],
       convertTriggerKey: true,
       getMenus,
-      mobile: {},
+      mobile: {
+        useScreenHeight: false,
+        scrollContainer: getViewportElement(this.std.host) ?? window,
+        scrollTopOffset: 46,
+      },
       ...this.std.getConfig('affine:page')?.linkedWidget,
     };
   }
